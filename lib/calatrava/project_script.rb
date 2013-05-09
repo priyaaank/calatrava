@@ -1,6 +1,6 @@
 require 'mustache'
 require 'yaml'
-require 'xcodeproj'
+#require 'xcodeproj'
 
 module Calatrava
 
