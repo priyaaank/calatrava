@@ -61,7 +61,7 @@ public class AjaxRequestManager {
     sharedManager = ajaxRequestManager;
   }
 
-  class AjaxRequest extends AsyncTask<String, Void, Void> {
+  class AjaxRequest extends AsyncTask<String, String, Void> {
 
     public static final int CONNECTION_TIMEOUT = 5;
     public static final int SO_TIMEOUT = 60;
@@ -75,7 +75,7 @@ public class AjaxRequestManager {
       String customHeaders = params[4];
       try {
         Log.d(TAG, "About to show loader");
-        context.sendBroadcast(new Intent("com.calatrava.ajax.start"));
+        publishProgress("com.calatrava.ajax.start");
         Log.d(TAG, "Issuing request");
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
@@ -113,9 +113,15 @@ public class AjaxRequestManager {
         rhino.invokeFailureCallback(requestId, 500, e.toString());
       } finally {
         Log.d(TAG, "About to hide loader");
-        context.sendBroadcast(new Intent("com.calatrava.ajax.finish"));
+        publishProgress("com.calatrava.ajax.finish");
       }
       return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+      Intent intentToBroadcast = new Intent(values[0]);
+      context.sendBroadcast(intentToBroadcast);
     }
 
     private Header[] addHeaders(String customHeaders) {
